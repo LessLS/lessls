@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LessLS — 新一代輕量級命令列工具平台</title>
+  <meta name="description" content="LessLS 是輕量級命令列工具平台，提供 ls install / ls login / ls release / ls update 等指令，讓包管理、登入、發布變得簡單。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --bg3: #1a1a24;
+      --border: #2a2a3a;
+      --text: #e4e4ef;
+      --text2: #9494aa;
+      --accent: #6366f1;
+      --accent2: #818cf8;
+      --green: #22c55e;
+      --cyan: #06b6d4;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --font: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { color: var(--accent); }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      font-size: 1.3rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--text2); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent);
+      color: white !important;
+      padding: 0.45rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .nav-cta:hover { background: var(--accent2); }
+    .nav-user {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--text2); font-size: 0.85rem;
+    }
+    .nav-user img { width: 28px; height: 28px; border-radius: 50%; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 10rem 2rem 6rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.35rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-bottom: 1.5rem;
+    }
+    .badge span { color: var(--green); margin-right: 0.3rem; }
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    h1 .gradient {
+      background: linear-gradient(135deg, var(--accent), var(--cyan), var(--green));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text2);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.8rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 30px rgba(99,102,241,0.6); }
+    .btn-secondary {
+      background: var(--bg3);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); }
+    .btn-github {
+      background: #24292e;
+      color: white;
+      border: 1px solid #444d56;
+    }
+    .btn-github:hover { border-color: var(--accent); }
+
+    /* ── Code Block ── */
+    .code-block {
+      max-width: 640px;
+      margin: 3rem auto 0;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: left;
+    }
+    .code-header {
+      background: var(--bg3);
+      padding: 0.6rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: var(--red); }
+    .dot-y { background: var(--yellow); }
+    .dot-g { background: var(--green); }
+    pre {
+      padding: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      overflow-x: auto;
+      color: var(--text);
+    }
+    .comment { color: var(--text2); }
+    .cmd { color: var(--cyan); }
+    .flag { color: var(--yellow); }
+    .str { color: var(--green); }
+
+    /* ── Login Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      max-width: 480px;
+      width: 90%;
+      position: relative;
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; color: var(--text2);
+      font-size: 1.5rem; cursor: pointer; line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .modal p { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .login-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      background: var(--bg);
+      padding: 0.3rem;
+      border-radius: 8px;
+    }
+    .login-tab {
+      flex: 1;
+      padding: 0.5rem;
+      text-align: center;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text2);
+      border: none;
+      background: none;
+      transition: all 0.2s;
+    }
+    .login-tab.active {
+      background: var(--accent);
+      color: white;
+    }
+    .login-method { display: none; }
+    .login-method.active { display: block; }
+    .auth-code {
+      text-align: center;
+      padding: 2rem;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .auth-code-label {
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .auth-code-value {
+      font-family: var(--mono);
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .auth-code-hint {
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-top: 0.75rem;
+    }
+    .input-group {
+      margin-bottom: 1rem;
+    }
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text2);
+      margin-bottom: 0.4rem;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-group input:focus { border-color: var(--accent); }
+    .input-group input::placeholder { color: var(--text2); }
+    .btn-full { width: 100%; justify-content: center; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: var(--text2);
+      font-size: 0.8rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .qr-hint {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-top: 1rem;
+    }
+
+    /* ── Features ── */
+    .section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--text2);
+      margin-bottom: 3rem;
+      font-size: 1.05rem;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .feature h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .feature p { color: var(--text2); font-size: 0.9rem; }
+    .feature code {
+      background: var(--bg3);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--cyan);
+    }
+
+    /* ── Commands Table ── */
+    .cmd-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+    .cmd-table th, .cmd-table td {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .cmd-table th {
+      color: var(--text2);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cmd-table td:first-child { font-family: var(--mono); color: var(--cyan); }
+    .cmd-table tr:hover td { background: var(--bg2); }
+
+    /* ── Install Section ── */
+    .install-section {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .install-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .step {
+      text-align: center;
+      padding: 2rem;
+    }
+    .step-num {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .step h3 { margin-bottom: 0.5rem; }
+    .step p { color: var(--text2); font-size: 0.9rem; }
+    .step pre {
+      margin-top: 1rem;
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text2);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      h1 { font-size: 2.2rem; }
+      .hero { padding: 8rem 1.5rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="nav-brand">ls</div>
+  <div class="nav-links">
+    <a href="#features">功能</a>
+    <a href="#commands">指令</a>
+    <a href="#install">安裝</a>
+    <a href="#docs">文件</a>
+    <a class="nav-cta" href="#" id="loginBtn">登入</a>
+    <a href="https://github.com/lessls/lessls">GitHub</a>
+  </div>
+</nav>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+    <h2>登入 LessLS</h2>
+    <p>選擇你偏好的登入方式</p>
+
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchTab('github')">GitHub</button>
+      <button class="login-tab" onclick="switchTab('code')">授權碼</button>
+      <button class="login-tab" onclick="switchTab('token')">Token</button>
+    </div>
+
+    <!-- GitHub Login -->
+    <div class="login-method active" id="tab-github">
+      <p style="margin-bottom:1rem">使用 GitHub 帳號快速登入 LessLS</p>
+      <a href="https://github.com/login/oauth/authorize?client_id=OAUTH_CLIENT_ID&redirect_uri=https://lessls.org/oauth/callback&scope=read:user"
+         class="btn btn-github btn-full"
+         id="githubLoginBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        使用 GitHub 帳號登入
+      </a>
+      <div class="qr-hint">登入後將自動建立 LessLS 帳號並綁定你的 GitHub 身份</div>
+    </div>
+
+    <!-- Code Login -->
+    <div class="login-method" id="tab-code">
+      <div class="auth-code">
+        <div class="auth-code-label">你的授權碼</div>
+        <div class="auth-code-value" id="authCode">------</div>
+        <div class="auth-code-hint">請在終端機執行：<code>ls login <span id="codeHint">------</span></code></div>
+      </div>
+      <div class="input-group">
+        <label>或直接輸入授權碼</label>
+        <input type="text" id="codeInput" placeholder="例如：ABCD1234" maxlength="8" style="text-transform:uppercase; letter-spacing:4px; text-align:center;">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="submitCodeLogin()">驗證並登入</button>
+      <div class="qr-hint">授權碼有效期 5 分鐘</div>
+    </div>
+
+    <!-- Token Login -->
+    <div class="login-method" id="tab-token">
+      <div class="input-group">
+        <label>使用者名稱</label>
+        <input type="text" id="usernameInput" placeholder="你的 LessLS 帳號">
+      </div>
+      <div class="input-group">
+        <label>Auth Token</label>
+        <input type="text" id="tokenInput" placeholder="your-auth-token-here">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="submitTokenLogin()">登入</button>
+      <div class="qr-hint">Token 可於個人設定頁面取得</div>
+    </div>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="badge"><span>✓</span> 開源免費 · 零依賴 · Node.js 18+</div>
+  <h1>新一代<br/><span class="gradient">命令列工具平台</span></h1>
+  <p>LessLS 讓包管理、登入、發布、更新變得簡單直覺。<br/>一個指令，搞定一切。</p>
+  <div class="hero-actions">
+    <a href="#install" class="btn btn-primary">立即安裝 →</a>
+    <a href="#features" class="btn btn-secondary">了解功能</a>
+  </div>
+  <div class="code-block">
+    <div class="code-header">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+    </div>
+    <pre><span class="comment"># 一行指令安裝 LessLS</span>
+<span class="cmd">npm</span> <span class="flag">install</span> <span class="str">-g @lessls/lessls</span>
+
+<span class="comment"># 開始使用</span>
+<span class="cmd">ls</span> <span class="flag">login</span>
+<span class="cmd">ls</span> <span class="flag">install</span> <span class="str">typescript</span>
+<span class="cmd">ls</span> <span class="flag">release</span></pre>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" id="features">
+  <h2 class="section-title">為什麼選擇 LessLS？</h2>
+  <p class="section-sub">簡單、快速、強大 — 設計哲學驅動每一次操作</p>
+  <div class="features">
+    <div class="feature">
+      <span class="feature-icon">📦</span>
+      <h3>簡易套件管理</h3>
+      <p>使用 <code>ls install</code> 安裝任何套件，支援 LessLS Registry、npm 與 GitHub 倉庫。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🔐</span>
+      <h3>多重登入方式</h3>
+      <p><code>ls login</code> 支援 GitHub OAuth、授權碼與 Token 三種模式，快速連上你的帳號。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🚀</span>
+      <h3>一鍵發布</h3>
+      <p><code>ls release</code> 直接發布到 LessLS Registry，支援 Tag 與 Dry Run 模式。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">⚡</span>
+      <h3>GitHub 安裝</h3>
+      <p><code>ls install github owner/repo</code> 直接從 GitHub 倉庫安裝套件，無需額外配置。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🔄</span>
+      <h3>自動更新</h3>
+      <p><code>ls update</code> 或 <code>ls update github</code> 從_registry_或 GitHub 更新至最新版本。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🔍</span>
+      <h3>智能搜尋</h3>
+      <p><code>ls search</code> 快速搜尋 LessLS、npm 上的套件，支援關鍵字過濾。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Commands -->
+<section class="section install-section" id="commands">
+  <h2 class="section-title">完整指令列表</h2>
+  <p class="section-sub">所有指令一覽，輕鬆上手</p>
+  <table class="cmd-table">
+    <thead>
+      <tr>
+        <th>指令</th>
+        <th>說明</th>
+        <th>範例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ls install &lt;pkg&gt;</td>
+        <td>安裝套件到本地</td>
+        <td><code>ls install @lessls/lessls</code></td>
+      </tr>
+      <tr>
+        <td>ls install github &lt;repo&gt;</td>
+        <td>從 GitHub 倉庫安裝</td>
+        <td><code>ls install github lessls/lessls</code></td>
+      </tr>
+      <tr>
+        <td>ls login</td>
+        <td>取得授權碼，引導完成登入</td>
+        <td><code>ls login</code></td>
+      </tr>
+      <tr>
+        <td>ls login &lt;code&gt;</td>
+        <td>使用授權碼快速登入</td>
+        <td><code>ls login ABCD1234</code></td>
+      </tr>
+      <tr>
+        <td>ls login &lt;user:token&gt;</td>
+        <td>直接使用 Token 登入</td>
+        <td><code>ls login myuser:token123</code></td>
+      </tr>
+      <tr>
+        <td>ls release</td>
+        <td>發布當前專案</td>
+        <td><code>ls release --tag latest</code></td>
+      </tr>
+      <tr>
+        <td>ls update</td>
+        <td>從 Registry 更新 LessLS CLI</td>
+        <td><code>ls update</code></td>
+      </tr>
+      <tr>
+        <td>ls update github</td>
+        <td>從 GitHub releases 更新</td>
+        <td><code>ls update github</code></td>
+      </tr>
+      <tr>
+        <td>ls search &lt;kw&gt;</td>
+        <td>搜尋套件</td>
+        <td><code>ls search http</code></td>
+      </tr>
+      <tr>
+        <td>ls list</td>
+        <td>列出已安裝套件</td>
+        <td><code>ls list</code></td>
+      </tr>
+      <tr>
+        <td>ls status</td>
+        <td>顯示 LessLS 狀態</td>
+        <td><code>ls status</code></td>
+      </tr>
+      <tr>
+        <td>ls help</td>
+        <td>顯示說明</td>
+        <td><code>ls help</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Install -->
+<section class="section" id="install">
+  <h2 class="section-title">快速安裝</h2>
+  <p class="section-sub">三步驟開始使用 LessLS</p>
+  <div class="install-steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>安裝 Node.js</h3>
+      <p>確保 Node.js 18+ 已安裝<br/>如未安裝請前往 nodejs.org</p>
+      <pre>node --version
+# v18.0.0 或更高</pre>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>全域安裝 CLI</h3>
+      <p>透過 npm 安裝 LessLS 命令列</p>
+      <pre>npm install -g @lessls/lessls</pre>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>開始使用</h3>
+      <p>登入並安裝第一個套件</p>
+      <pre>ls login
+ls install @lessls/weather
+ls status</pre>
+    </div>
+  </div>
+</section>
+
+<!-- Docs -->
+<section class="section install-section" id="docs">
+  <h2 class="section-title">文件與資源</h2>
+  <p class="section-sub">深入了解更多 LessLS 功能</p>
+  <div class="features">
+    <div class="feature">
+      <span class="feature-icon">📖</span>
+      <h3>使用指南</h3>
+      <p>從零開始學習 LessLS 的所有指令與工作流程。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🧩</span>
+      <h3>開發者 API</h3>
+      <p>了解如何開發 LessLS 插件與擴充套件。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">💬</span>
+      <h3>社群討論</h3>
+      <p>加入 Discord 社群，與其他 LessLS 使用者交流。</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🐙</span>
+      <h3>GitHub 開源</h3>
+      <p>所有原始碼開放於 <a href="https://github.com/lessls/lessls">github.com/lessls/lessls</a>，歡迎貢獻。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2025-2026 LessLS — 開源免費 · MIT License · <a href="https://github.com/lessls/lessls">GitHub</a></p>
+</footer>
+
+<script>
+  // ── 登入 Modal ──
+  const loginModal = document.getElementById('loginModal');
+  const loginBtn = document.getElementById('loginBtn');
+
+  loginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openLoginModal();
+  });
+
+  function openLoginModal() {
+    loginModal.classList.add('active');
+    generateAuthCode();
+  }
+
+  function closeLoginModal() {
+    loginModal.classList.remove('active');
+  }
+
+  loginModal.addEventListener('click', (e) => {
+    if (e.target === loginModal) closeLoginModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLoginModal();
+  });
+
+  // ── Tab 切換 ──
+  function switchTab(tab) {
+    document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.login-method').forEach(m => m.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab === 'code') generateAuthCode();
+  }
+
+  // ── 授權碼產生 ──
+  function generateAuthCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    document.getElementById('authCode').textContent = code;
+    document.getElementById('codeHint').textContent = code;
+    return code;
+  }
+
+  // ── 提交授權碼登入 ──
+  async function submitCodeLogin() {
+    const code = document.getElementById('codeInput').value.trim().toUpperCase();
+    if (!code || code.length < 4) {
+      alert('請輸入有效的授權碼');
+      return;
+    }
+    // 模擬登入（實際環境會呼叫後端 API）
+    alert('正在驗證授權碼 ' + code + '...\n\n（實際環境會呼叫 https://api.lessls.org/auth/verify）');
+    // window.location.href = '/oauth/callback?code=' + code;
+  }
+
+  // ── 提交 Token 登入 ──
+  async function submitTokenLogin() {
+    const username = document.getElementById('usernameInput').value.trim();
+    const token = document.getElementById('tokenInput').value.trim();
+    if (!username || !token) {
+      alert('請填寫使用者名稱與 Token');
+      return;
+    }
+    alert('正在使用 Token 登入 ' + username + '...\n\n（實際環境會呼叫 https://api.lessls.org/auth/token）');
+    // window.location.href = '/oauth/callback?token=' + encodeURIComponent(token);
+  }
+
+  // ── GitHub OAuth ──
+  // 實際部署時將 OAUTH_CLIENT_ID 替換為真實的 GitHub OAuth Client ID
+  const GITHUB_CLIENT_ID = 'OAUTH_CLIENT_ID';
+  document.getElementById('githubLoginBtn').href =
+    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=https://lessls.org/oauth/callback&scope=read:user`;
+</script>
+
+</body>
+</html>

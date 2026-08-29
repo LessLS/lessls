@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+packages/*/node_modules/
+
+# Build output
+packages/*/dist/
+packages/*/build/
+
+# Compiled/exe files
+*.exe
+*.dll
+*.so
+*.dylib
+dist/
+bin/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# LessLS local state
+~/.lessls/
+.config/lessls/
+
+# Temp files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Package locks (keep for development, but not in release)
+# package-lock.json  ← keep this one
+# yarn.lock
+packages/cli/\$PROFILE

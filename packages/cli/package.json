@@ -1,0 +1,26 @@
+{
+  "name": "@lessls/lessls",
+  "version": "0.1.0",
+  "description": "LessLS — 新一代輕量級命令列工具平台",
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "bin": {
+    "ls": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "pkg": "pkg dist/index.js --targets node18-win-x64 --output ../assets/lessls.exe --compress GZip",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "keywords": ["cli", "package-manager", "lessls"],
+  "license": "MIT",
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}
