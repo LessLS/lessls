@@ -789,9 +789,8 @@ ls status</pre>
 
   // ── GitHub OAuth ──
     // 實際部署時將 OAUTH_CLIENT_ID 替換為真實的 GitHub OAuth Client ID
-  // CLI 的 redirect_uri 為 http://localhost:18742/oauth/callback
   const GITHUB_CLIENT_ID = 'OAUTH_CLIENT_ID';
-  const GITHUB_REDIRECT = 'http://localhost:18742/oauth/callback';
+  const GITHUB_REDIRECT = 'https://ls.illusd.com/oauth/callback';
   document.getElementById('githubLoginBtn').href =
     `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(GITHUB_REDIRECT)}&scope=read:user`;
 </script>

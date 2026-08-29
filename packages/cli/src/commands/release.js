@@ -1,5 +1,5 @@
 /**
- * ls release [--tag <tag>] [--dry-run]
+ * lss release [--tag <tag>] [--dry-run]
  *  發布當前專案到 LessLS Registry
  */
 const path = require('path');
@@ -10,7 +10,7 @@ function run(args, ctx) {
   const { CONFIG_PATH } = ctx;
 
   if (!fs.existsSync(CONFIG_PATH)) {
-    warn('尚未登入，請先執行：ls login');
+    warn('尚未登入，請先執行：lss login');
     return;
   }
 
@@ -23,7 +23,7 @@ function run(args, ctx) {
   }
 
   if (config.user === 'anonymous' || !config.token) {
-    warn('尚未登入，請先執行：ls login <token>');
+    warn('尚未登入，請先執行：lss login <token>');
     return;
   }
 
@@ -33,7 +33,7 @@ function run(args, ctx) {
 
   const pkgPath = path.join(process.cwd(), 'package.json');
   if (!fs.existsSync(pkgPath)) {
-    warn('找不到 package.json，請在專案根目錄執行 ls release');
+    warn('找不到 package.json，請在專案根目錄執行 lss release');
     return;
   }
 

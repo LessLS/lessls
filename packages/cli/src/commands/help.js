@@ -1,5 +1,5 @@
 /**
- * ls help — 顯示協助訊息
+ * lss help — 顯示協助訊息
  */
 const config = require('../config');
 function run(args, ctx) {
@@ -10,37 +10,37 @@ function run(args, ctx) {
   log(chalk.dim + '版本 ' + version + '\n');
 
   log(chalk.bold + '常用指令：' + chalk.reset);
-  log('  ls install <package>          安裝套件，例如：ls install @lessls/lessls');
-  log('  ls install github <owner>/<repo>  從 GitHub 倉庫安裝');
-  log('  ls login                      登入 LessLS 帳號');
-  log('  ls login <code>               使用授權碼登入');
-  log('  ls release                      發布當前專案到 LessLS Registry');
-  log('  ls update                       更新 LessLS 本身');
-  log('  ls update github                從 GitHub 更新');
-  log('  ls search <keyword>             搜尋套件');
-  log('  ls list                         列出已安裝套件');
-  log('  ls status                       顯示 LessLS 狀態');
-  log('  ls help                         顯示本說明');
+  log('  lss install <package>          安裝套件，例如：lss install @lessls/lessls');
+  log('  lss install github <owner>/<repo>  從 GitHub 倉庫安裝');
+  log('  lss login                      登入 LessLS 帳號');
+  log('  lss login <code>               使用授權碼登入');
+  log('  lss release                      發布當前專案到 LessLS Registry');
+  log('  lss update                       更新 LessLS 本身');
+  log('  lss update github                從 GitHub 更新');
+  log('  lss search <keyword>             搜尋套件');
+  log('  lss list                         列出已安裝套件');
+  log('  lss status                       顯示 LessLS 狀態');
+  log('  lss help                         顯示本說明');
 
   log(chalk.bold + '\n套件來源：' + chalk.reset);
   log('  LessLS Registry (預設):  ' + config.registry);
-  log('  npm (相容模式):          ls install <pkg> --registry npm');
-  log('  GitHub:                  ls install github <owner>/<repo>');
+  log('  npm (相容模式):          lss install <pkg> --registry npm');
+  log('  GitHub:                  lss install github <owner>/<repo>');
 
   log(chalk.bold + '\n登入方式：' + chalk.reset);
-  log('  ls login                  → 取得授權碼，前往網頁完成登入');
-  log('  ls login <code>           → 使用授權碼快速登入');
-  log('  ls login <user:token>     → 直接使用 Token 登入');
+  log('  lss login                  → 取得授權碼，前往網頁完成登入');
+  log('  lss login <code>           → 使用授權碼快速登入');
+  log('  lss login <user:token>     → 直接使用 Token 登入');
 
   log(chalk.bold + '\n範例：' + chalk.reset);
-  log('  ls install @lessls/lessls');
-  log('  ls install typescript --registry npm');
-  log('  ls install github lessls/lessls');
-  log('  ls login');
-  log('  ls login ABCD1234');
-  log('  ls release --tag latest');
-  log('  ls update github');
-  log('  ls search http');
+  log('  lss install @lessls/lessls');
+  log('  lss install typescript --registry npm');
+  log('  lss install github lessls/lessls');
+  log('  lss login');
+  log('  lss login ABCD1234');
+  log('  lss release --tag latest');
+  log('  lss update github');
+  log('  lss search http');
 }
 
 module.exports = { run };

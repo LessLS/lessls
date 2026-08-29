@@ -3,13 +3,13 @@
  * LessLS — 新一代輕量級命令列工具平台
  *
  * 使用方式：
- *   ls install <package>      # 安裝套件
- *   ls login                  # 登入 LessLS 平台
- *   ls release                # 發布當前專案到 LessLS Registry
- *   ls update                 # 更新 LessLS 本身
- *   ls search <keyword>       # 搜尋套件
- *   ls list                   # 列出已安裝套件
- *   ls status                 # 顯示 LessLS 狀態
+ *   lss install <package>      # 安裝套件
+ *   lss login                  # 登入 LessLS 平台
+ *   lss release                # 發布當前專案到 LessLS Registry
+ *   lss update                 # 更新 LessLS 本身
+ *   lss search <keyword>       # 搜尋套件
+ *   lss list                   # 列出已安裝套件
+ *   lss status                 # 顯示 LessLS 狀態
  *   ls --help                 # 顯示說明
  */
 

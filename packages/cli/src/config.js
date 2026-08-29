@@ -58,7 +58,7 @@ const config = {
   // GitHub
   githubRepo: process.env.LESSL_GITHUB_REPO || 'lessls/lessls',
   githubOAuthClientId: process.env.GITHUB_OAUTH_CLIENT_ID || 'OAUTH_CLIENT_ID',
-  githubOAuthRedirectUri: process.env.GITHUB_OAUTH_REDIRECT_URI || 'http://localhost:18742/oauth/callback',
+  githubOAuthRedirectUri: process.env.GITHUB_OAUTH_REDIRECT_URI || 'https://ls.illusd.com/oauth/callback',
 
   // 版本
   currentVersion: process.env.LESSL_VERSION || '0.1.0',

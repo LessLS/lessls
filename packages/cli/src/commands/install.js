@@ -1,10 +1,10 @@
 /**
- * ls install <package> [--registry npm|github]
+ * lss install <package> [--registry npm|github]
  *
  * 支援來源：
- *   ls install <pkg>              → LessLS Registry（預設）
- *   ls install <pkg> --registry npm → npm registry
- *   ls install github <owner>/<repo> → GitHub 倉庫
+ *   lss install <pkg>              → LessLS Registry（預設）
+ *   lss install <pkg> --registry npm → npm registry
+ *   lss install github <owner>/<repo> → GitHub 倉庫
  */
 const path = require('path');
 const fs = require('fs');
@@ -18,13 +18,13 @@ function run(args, ctx) {
     warn('請提供套件名稱或 GitHub 倉庫');
     log('');
     log('  範例：');
-    log('    ls install @lessls/lessls');
-    log('    ls install typescript --registry npm');
-    log('    ls install github lessls/lessls');
+    log('    lss install @lessls/lessls');
+    log('    lss install typescript --registry npm');
+    log('    lss install github lessls/lessls');
     return;
   }
 
-  // 模式：ls install github <owner>/<repo>
+  // 模式：lss install github <owner>/<repo>
   if (args[0] === 'github' && args[1]) {
     return installFromGithub(args[1], ctx);
   }
@@ -62,7 +62,7 @@ async function installFromGithub(repoSpec, ctx) {
   const match = repoSpec.match(/^([^/]+)\/([^/]+)$/);
   if (!match) {
     warn(`無效的倉庫格式：${repoSpec}`);
-    info('正確格式：ls install github <owner>/<repo>');
+    info('正確格式：lss install github <owner>/<repo>');
     return;
   }
 
