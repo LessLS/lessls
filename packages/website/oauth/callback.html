@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LessLS — 授權中</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --border: #2a2a3a;
+      --text: #e4e4ef;
+      --text2: #9494aa;
+      --accent: #6366f1;
+      --green: #22c55e;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+    }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    p { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .code-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .code-label {
+      font-size: 0.75rem;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+    .code-value {
+      font-family: var(--mono);
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: var(--green);
+      user-select: all;
+    }
+    .copy-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: #4f52d9; }
+    .copy-btn.copied { background: var(--green); }
+    .hint {
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-top: 1rem;
+    }
+    .hint code {
+      background: var(--bg);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: var(--mono);
+      color: #06b6d4;
+    }
+    .error { color: #ef4444; }
+    a.home {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: var(--text2);
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    a.home:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="spinner" id="spinner"></div>
+    <h2 id="title">正在授權...</h2>
+    <p id="subtitle">請等待 GitHub 回傳授權碼</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const error = params.get('error');
+    const state = params.get('state');
+
+    const card = document.getElementById('card');
+    const spinner = document.getElementById('spinner');
+    const title = document.getElementById('title');
+    const subtitle = document.getElementById('subtitle');
+
+    if (error) {
+      spinner.style.display = 'none';
+      title.textContent = '授權失敗';
+      title.className = 'error';
+      subtitle.textContent = params.get('error_description') || error;
+    } else if (code) {
+      // GitHub 授權成功，顯示 code
+      setTimeout(() => {
+        spinner.style.display = 'none';
+        title.textContent = '授權成功！';
+        subtitle.textContent = '請複製下方授權碼，回到終端機完成登入';
+
+        card.innerHTML = `
+          <div style="font-size:2rem;margin-bottom:0.5rem">✅</div>
+          <h2>授權成功！</h2>
+          <p>請複製下方授權碼，回到終端機完成登入</p>
+          <div class="code-box">
+            <div class="code-label">你的授權碼</div>
+            <div class="code-value" id="code">${code}</div>
+          </div>
+          <button class="copy-btn" id="copyBtn" onclick="copyCode()">📋 複製授權碼</button>
+          <div class="hint">
+            回到終端機執行：<br/>
+            <code>ls login ${code}</code>
+          </div>
+          <a class="home" href="https://ls.illusd.com">← 回到 LessLS 官網</a>
+        `;
+      }, 800);
+    } else {
+      spinner.style.display = 'none';
+      title.textContent = '找不到授權碼';
+      subtitle.textContent = '請確認你已透過 GitHub 完成授權';
+    }
+
+    function copyCode() {
+      const codeEl = document.getElementById('code');
+      const btn = document.getElementById('copyBtn');
+      navigator.clipboard.writeText(codeEl.textContent.trim())
+        .then(() => {
+          btn.textContent = '✅ 已複製';
+          btn.classList.add('copied');
+        })
+        .catch(() => {
+          codeEl.select();
+          document.execCommand('copy');
+          btn.textContent = '✅ 已複製';
+          btn.classList.add('copied');
+        });
+    }
+  </script>
+</body>
+</html>
