@@ -1,9 +1,9 @@
 /**
- * ls update — 更新 LessLS CLI 本身
+ * lss update — 更新 LessLS CLI 本身
  *
  * 支援來源：
- *   ls update                 → 從 LessLS Registry 檢查更新
- *   ls update github          → 從 GitHub releases 下載最新版
+ *   lss update                 → 從 LessLS Registry 檢查更新
+ *   lss update github          → 從 GitHub releases 下載最新版
  */
 const path = require('path');
 const fs = require('fs');
@@ -14,7 +14,7 @@ const GITHUB_REPO = require('../config').githubRepo;
 function run(args, ctx) {
   const { log, info, ok, warn } = ctx;
 
-  // 模式：ls update github
+  // 模式：lss update github
   if (args[0] === 'github') {
     return updateFromGithub(ctx);
   }
@@ -32,12 +32,12 @@ function run(args, ctx) {
         ok(`已更新至 ${latest}`);
       }).catch(err => {
         warn(`更新失敗：${err.message}`);
-        info('請嘗試：ls update github');
+        info('請嘗試：lss update github');
       });
     }
   }).catch(err => {
     warn(`檢查更新失敗：${err.message}`);
-    info('請嘗試：ls update github');
+    info('請嘗試：lss update github');
   });
 }
 

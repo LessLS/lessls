@@ -1,5 +1,5 @@
 /**
- * ls status — 顯示 LessLS 狀態
+ * lss status — 顯示 LessLS 狀態
  */
 function run(args, ctx) {
   const { log } = ctx;

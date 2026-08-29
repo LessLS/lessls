@@ -1,5 +1,5 @@
 /**
- * ls search <keyword> [--limit N]
+ * lss search <keyword> [--limit N]
  *  搜尋 LessLS Registry 或 npm 中的套件
  */
 function run(args, ctx) {
@@ -23,10 +23,10 @@ function run(args, ctx) {
   const limit = limitFlag ? parseInt(limitFlag.split('=')[1], 10) : 10;
 
   if (!keyword) {
-    log('  請提供搜尋關鍵字，例如：ls search http');
+    log('  請提供搜尋關鍵字，例如：lss search http');
     log('');
     log('  額外支援：');
-    log('    ls install github <owner>/<repo>');
+    log('    lss install github <owner>/<repo>');
     return;
   }
 
@@ -38,7 +38,7 @@ function run(args, ctx) {
   if (results.length === 0) {
     log(`  找不到與 "${keyword}" 相關的套件`);
     log('');
-    info('嘗試：ls install github <owner>/<repo>');
+    info('嘗試：lss install github <owner>/<repo>');
     return;
   }
 
@@ -52,8 +52,8 @@ function run(args, ctx) {
   }
 
   log('');
-  info(`ls install ${results[0]?.name}`);
-  info(`或從 GitHub：ls install github owner/repo`);
+  info(`lss install ${results[0]?.name}`);
+  info(`或從 GitHub：lss install github owner/repo`);
 }
 
 module.exports = { run };

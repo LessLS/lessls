@@ -1,5 +1,5 @@
 /**
- * ls list — 列出已安裝的 LessLS 套件
+ * lss list — 列出已安裝的 LessLS 套件
  */
 const fs = require('fs');
 const path = require('path');
@@ -9,7 +9,7 @@ function run(args, ctx) {
   const { LOCK_PATH } = ctx;
 
   if (!fs.existsSync(LOCK_PATH)) {
-    log('  目前沒有已安裝的套件（執行 ls install <pkg> 安裝）');
+    log('  目前沒有已安裝的套件（執行 lss install <pkg> 安裝）');
     return;
   }
 

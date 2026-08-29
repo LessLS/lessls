@@ -1,11 +1,11 @@
 /**
- * ls login — 登入 LessLS 平台
+ * lss login — 登入 LessLS 平台
  *
  * 支援模式：
- *   ls login                  → 顯示登入指引（含授權碼）
- *   ls login <code>           → 輸入授權碼登入
- *   ls login <user:token>     → 直接使用 token 登入
- *   ls login <token>          → 直接使用 token 登入
+ *   lss login                  → 顯示登入指引（含授權碼）
+ *   lss login <code>           → 輸入授權碼登入
+ *   lss login <user:token>     → 直接使用 token 登入
+ *   lss login <token>          → 直接使用 token 登入
  */
 const path = require('path');
 const fs = require('fs');
@@ -15,12 +15,12 @@ function run(args, ctx) {
   const { log, info, ok, warn } = ctx;
   const { CONFIG_PATH } = ctx;
 
-  // 模式 1：ls login <code> — 授權碼登入
+  // 模式 1：lss login <code> — 授權碼登入
   if (args[0] && args[0].match(/^[A-Z0-9]{6}$/i)) {
     return loginByCode(args[0], ctx);
   }
 
-  // 模式 2：ls login <user:token> 或 ls login <token>
+  // 模式 2：lss login <user:token> 或 lss login <token>
   if (args[0]) {
     const parts = args[0].split(':');
     const username = parts[0] || 'user';
@@ -70,7 +70,7 @@ function run(args, ctx) {
   log(`  │  👉 ${lesslsUrl}`);
   log('  │');
   log('  │  或直接在終端機執行：');
-  log(`  │  ls login ${code}`);
+  log(`  │  lss login ${code}`);
   log('  │');
   log('  └───────────────────────────────────────────────────');
   log('');
@@ -115,7 +115,7 @@ async function loginByCode(code, ctx) {
     warn(`授權碼驗證失敗：${err.message}`);
     log('');
     info('請確認授權碼是否正確或已過期');
-    info('重新執行 ls login 取得新的授權碼');
+    info('重新執行 lss login 取得新的授權碼');
   }
 }
 
