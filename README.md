@@ -96,7 +96,7 @@ ls login user:your-auth-token
 
 ## 官方網站
 
-https://lessls.org
+https://ls.illusd.com
 
 ## 開發
 
