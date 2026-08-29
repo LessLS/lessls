@@ -1,0 +1,20 @@
+{
+  "name": "lessls",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LessLS — 新一代輕量級命令列工具平台",
+  "scripts": {
+    "cli:dev": "cd packages/cli && node dist/index.js",
+    "cli:build": "cd packages/cli && npm run build",
+    "cli:pkg": "cd packages/cli && npm run pkg",
+    "web:dev": "cd packages/website && npm run dev",
+    "web:build": "cd packages/website && npm run build",
+    "web:preview": "cd packages/website && npm run preview"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
