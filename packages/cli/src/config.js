@@ -15,32 +15,40 @@ const fs = require('fs');
 // ── 載入 .env 檔案 ────────────────────────────────────────────
 
 function loadDotEnv() {
-  // .env 可能在以下位置（優先順序由高到低）
+  // .env 可能在多個位置，逐一尋找（優先順序由高到低）
   const candidates = [
-    path.join(__dirname, '..', '.env'),                    // packages/cli/.env
-    path.join(__dirname, '..', '..', '.env'),              // packages/.env
-    path.join(__dirname, '..', '..', '..', '.env'),         // repo root
-    path.join(process.cwd(), '.env'),                      // 執行目錄
+    // 1. 執行目錄的 .env（最常用）
+    path.join(process.cwd(), '.env'),
+    // 2. exe 同一層的 .env
+    path.join(path.dirname(process.execPath), '.env'),
+    // 3. home 目錄
+    path.join(process.env.HOME || process.env.USERPROFILE || '', '.lessls', '.env'),
+    // 4. 相對路徑
+    path.join(__dirname, '..', '.env'),
+    path.join(__dirname, '..', '..', '.env'),
+    path.join(__dirname, '..', '..', '..', '.env'),
   ];
   for (const envPath of candidates) {
     if (!fs.existsSync(envPath)) continue;
-    const content = fs.readFileSync(envPath, 'utf8');
-    for (const line of content.split('\n')) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
-      const eqIdx = trimmed.indexOf('=');
-      if (eqIdx === -1) continue;
-      const key = trimmed.slice(0, eqIdx).trim();
-      let val = trimmed.slice(eqIdx + 1).trim();
-      if ((val.startsWith('"') && val.endsWith('"')) ||
-          (val.startsWith("'") && val.endsWith("'"))) {
-        val = val.slice(1, -1);
+    try {
+      const content = fs.readFileSync(envPath, 'utf8');
+      for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx === -1) continue;
+        const key = trimmed.slice(0, eqIdx).trim();
+        let val = trimmed.slice(eqIdx + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) ||
+            (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.slice(1, -1);
+        }
+        if (process.env[key] === undefined) {
+          process.env[key] = val;
+        }
       }
-      if (process.env[key] === undefined) {
-        process.env[key] = val;
-      }
-    }
-    break;
+      break;
+    } catch {}
   }
 }
 
