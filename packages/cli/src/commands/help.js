@@ -1,6 +1,7 @@
 /**
  * ls help — 顯示協助訊息
  */
+const config = require('../config');
 function run(args, ctx) {
   const { log, chalk, info } = ctx;
   const version = require('../../package.json').version;
@@ -22,7 +23,7 @@ function run(args, ctx) {
   log('  ls help                         顯示本說明');
 
   log(chalk.bold + '\n套件來源：' + chalk.reset);
-  log('  LessLS Registry (預設):  registry.lessls.org');
+  log('  LessLS Registry (預設):  ' + config.registry);
   log('  npm (相容模式):          ls install <pkg> --registry npm');
   log('  GitHub:                  ls install github <owner>/<repo>');
 

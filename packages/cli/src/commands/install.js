@@ -8,6 +8,7 @@
  */
 const path = require('path');
 const fs = require('fs');
+const config = require('../config');
 
 function run(args, ctx) {
   const { log, info, ok, warn } = ctx;
@@ -128,7 +129,7 @@ function detectVersion(spec, registry) {
 
 function buildResolved(spec, registry) {
   if (registry === 'lessls') {
-    return `https://registry.lessls.org/${spec}/-/${spec.replace(/\//g, '-')}-latest.tgz`;
+    return `https://${config.registry.replace('https://', '')}/${spec}/-/${spec.replace(/\//g, '-')}-latest.tgz`;
   }
   return `https://registry.npmjs.org/${spec}/-/${spec.replace(/\//g, '-')}-latest.tgz`;
 }

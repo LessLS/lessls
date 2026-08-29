@@ -15,6 +15,10 @@ function build() {
   copyFileSync(join(SRC, 'index.js'), join(DIST, 'index.js'));
   console.log('✓ built dist/index.js');
 
+  // 複製 config.js
+  copyFileSync(join(SRC, 'config.js'), join(DIST, 'config.js'));
+  console.log('✓ built dist/config.js');
+
   // 複製所有 commands
   const cmdDir = join(SRC, 'commands');
   if (existsSync(cmdDir)) {

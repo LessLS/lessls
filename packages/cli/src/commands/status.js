@@ -6,7 +6,8 @@ function run(args, ctx) {
   const { CONFIG_PATH, LOCK_PATH } = ctx;
   const fs = require('fs');
 
-  const version = '0.1.0';
+  const version = require('../config').currentVersion;
+  const registry = require('../config').registry;
   const hasConfig = fs.existsSync(CONFIG_PATH);
   let user = '未登入';
   if (hasConfig) {
@@ -23,7 +24,7 @@ function run(args, ctx) {
   log(`  │  安裝路徑: ${process.execPath}`);
   log(`  │  帳號    : ${user}${' '.repeat(38 - user.length)}`);
   log(`  │  已安裝套件: ${installed}${' '.repeat(30 - String(installed).length)}`);
-  log('  │  Registry: registry.lessls.org');
+  log(`  │  Registry: ${registry}`);
   log('  └─────────────────────────────────────────────────────────');
   log('');
 }

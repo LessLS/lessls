@@ -67,7 +67,7 @@ function run(args, ctx) {
 
   info(`正在發布 ${name}@${version} ...`);
   ok(`已發布 ${name}@${version} [${tag}]`);
-  info('registry.lessls.org');
+  info(require('../config').registry);
 }
 
 module.exports = { run };

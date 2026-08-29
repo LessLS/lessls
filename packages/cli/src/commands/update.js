@@ -8,8 +8,8 @@
 const path = require('path');
 const fs = require('fs');
 
-const CURRENT_VERSION = '0.1.0';
-const GITHUB_REPO = 'lessls/lessls';
+const CURRENT_VERSION = require('../config').currentVersion;
+const GITHUB_REPO = require('../config').githubRepo;
 
 function run(args, ctx) {
   const { log, info, ok, warn } = ctx;
@@ -84,7 +84,7 @@ async function updateFromGithub(ctx) {
 
 async function checkLessLSRegistry() {
   try {
-    const res = await fetch('https://registry.lessls.org/@lessls/lessls/latest');
+    const res = await fetch(`${config.registry}/@lessls/lessls/latest`);
     const data = await res.json();
     return { latest: data.version || CURRENT_VERSION };
   } catch {

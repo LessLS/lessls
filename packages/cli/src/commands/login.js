@@ -9,8 +9,7 @@
  */
 const path = require('path');
 const fs = require('fs');
-
-const API_BASE = 'https://api.lessls.org';
+const config = require('../config');
 
 function run(args, ctx) {
   const { log, info, ok, warn } = ctx;
@@ -46,8 +45,8 @@ function run(args, ctx) {
 
   // 產生授權碼
   const code = generateAuthCode();
-  const githubUrl = `https://github.com/login/oauth/authorize?client_id=OAUTH_CLIENT_ID&redirect_uri=https://lessls.org/oauth/callback&scope=read:user&state=${code}`;
-  const lesslsUrl = `https://lessls.org/login?code=${code}`;
+  const githubUrl = `https://github.com/login/oauth/authorize?client_id=${config.githubOAuthClientId}&redirect_uri=${encodeURIComponent(config.githubOAuthRedirectUri)}&scope=read:user&state=${code}`;
+  const lesslsUrl = `${config.registry}/login?code=${code}`;
 
   log('  ┌─ GitHub 快速登入 ───────────────────────────────');
   log('  │');
@@ -91,7 +90,7 @@ async function loginByCode(code, ctx) {
   info(`正在驗證授權碼 ${code} ...`);
 
   try {
-    const res = await fetch(`${API_BASE}/auth/verify`, {
+    const res = await fetch(`${config.apiBase}/auth/verify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code }),
@@ -123,8 +122,8 @@ async function loginByCode(code, ctx) {
 // ── GitHub OAuth ──────────────────────────────────────────────
 
 function getGithubLoginUrl(code) {
-  const clientId = 'OAUTH_CLIENT_ID';
-  const redirectUri = encodeURIComponent('https://lessls.org/oauth/callback');
+  const clientId = config.githubOAuthClientId;
+  const redirectUri = config.githubOAuthRedirectUri;
   return `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user&state=${code}`;
 }
 
