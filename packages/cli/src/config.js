@@ -15,25 +15,32 @@ const fs = require('fs');
 // ── 載入 .env 檔案 ────────────────────────────────────────────
 
 function loadDotEnv() {
-  const envPath = path.join(__dirname, '..', '..', '..', '.env');
-  if (!fs.existsSync(envPath)) return;
-  const content = fs.readFileSync(envPath, 'utf8');
-  for (const line of content.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eqIdx = trimmed.indexOf('=');
-    if (eqIdx === -1) continue;
-    const key = trimmed.slice(0, eqIdx).trim();
-    let val = trimmed.slice(eqIdx + 1).trim();
-    // 移除引號
-    if ((val.startsWith('"') && val.endsWith('"')) ||
-        (val.startsWith("'") && val.endsWith("'"))) {
-      val = val.slice(1, -1);
+  // .env 可能在以下位置（優先順序由高到低）
+  const candidates = [
+    path.join(__dirname, '..', '.env'),                    // packages/cli/.env
+    path.join(__dirname, '..', '..', '.env'),              // packages/.env
+    path.join(__dirname, '..', '..', '..', '.env'),         // repo root
+    path.join(process.cwd(), '.env'),                      // 執行目錄
+  ];
+  for (const envPath of candidates) {
+    if (!fs.existsSync(envPath)) continue;
+    const content = fs.readFileSync(envPath, 'utf8');
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx === -1) continue;
+      const key = trimmed.slice(0, eqIdx).trim();
+      let val = trimmed.slice(eqIdx + 1).trim();
+      if ((val.startsWith('"') && val.endsWith('"')) ||
+          (val.startsWith("'") && val.endsWith("'"))) {
+        val = val.slice(1, -1);
+      }
+      if (process.env[key] === undefined) {
+        process.env[key] = val;
+      }
     }
-    // 僅在環境變數未設定時才寫入
-    if (process.env[key] === undefined) {
-      process.env[key] = val;
-    }
+    break;
   }
 }
 
