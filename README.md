@@ -1,102 +1,105 @@
-# LessLS
+# LessLS — 新一代輕量級命令列工具平台
 
 輕量級命令列工具平台，讓包管理、登入、發布、更新變得簡單直覺。
 
 ```powershell
 # 安裝
-ls install @lessls/lessls
+lss install @lessls/lessls
 
-# 登入（支援 GitHub / 授權碼 / Token）
-ls login
-ls login ABCD1234
-ls login user:token
+# 登入（GitHub OAuth 授權碼）
+lss login
+lss login ABCD1234
 
 # 發布
-ls release
+lss release
 
 # 更新
-ls update
-ls update github
+lss update
+lss update github
 
 # 從 GitHub 安裝
-ls install github lessls/lessls
+lss install github lessls/lessls
 ```
 
 ## 快速開始
 
-### 方法一：使用 EXE（推薦，無需安裝 Node.js）
+### 安裝
 
 ```powershell
-# 下載 lessls.exe 到任意位置
+# 下載 lessls.exe 到任意位置，或直接執行
 .\lessls.exe help
 .\lessls.exe login
 .\lessls.exe install typescript
 ```
 
-### 方法二：npm 全域安裝
+### 全域安裝（npm）
 
 ```bash
 npm install -g @lessls/lessls
 ```
 
-### 方法三：從 source 編譯
-
-```bash
-git clone https://github.com/LessLS/lessls
-cd lessls
-npm install
-npm run cli:build
-```
-
-## 完整指令列表
+## 指令列表
 
 | 指令 | 說明 | 範例 |
 |------|------|------|
-| `ls help` | 顯示協助訊息 | `ls help` |
-| `ls install <pkg>` | 安裝套件（LessLS/npm） | `ls install @lessls/lessls` |
-| `ls install github <repo>` | 從 GitHub 倉庫安裝 | `ls install github lessls/lessls` |
-| `ls login` | 登入 LessLS（顯示授權碼） | `ls login` |
-| `ls login <code>` | 使用授權碼快速登入 | `ls login ABCD1234` |
-| `ls login <user:token>` | 直接使用 Token 登入 | `ls login user:token` |
-| `ls release` | 發布當前專案到 LessLS Registry | `ls release --tag latest` |
-| `ls update` | 從 LessLS Registry 更新 | `ls update` |
-| `ls update github` | 從 GitHub releases 更新 | `ls update github` |
-| `ls search <kw>` | 搜尋套件 | `ls search http` |
-| `ls list` | 列出已安裝套件 | `ls list` |
-| `ls status` | 顯示 LessLS 狀態 | `ls status` |
-| `ls --version` | 顯示版本 | `ls --version` |
+| `lss help` | 顯示協助訊息 | `lss help` |
+| `lss install <pkg>` | 安裝套件 | `lss install @lessls/lessls` |
+| `lss install github <repo>` | 從 GitHub 倉庫安裝 | `lss install github lessls/lessls` |
+| `lss login` | 取得 GitHub 授權連結 | `lss login` |
+| `lss login <code>` | 使用授權碼登入 | `lss login ABCD1234` |
+| `lss login <user:token>` | 直接使用 Token 登入 | `lss login user:token` |
+| `lss release` | 發布當前專案 | `lss release --tag latest` |
+| `lss update` | 從 Registry 更新 | `lss update` |
+| `lss update github` | 從 GitHub releases 更新 | `lss update github` |
+| `lss search <kw>` | 搜尋套件 | `lss search http` |
+| `lss list` | 列出已安裝套件 | `lss list` |
+| `lss status` | 顯示 LessLS 狀態 | `lss status` |
 
-## 登入方式
+## 登入流程
 
-### GitHub OAuth 登入
-```powershell
-ls login
-# 會顯示授權碼，前往網站完成 GitHub 授權
+```
+1. lss login
+   → 顯示 GitHub 授權連結 + 授權碼
+
+2. 瀏覽器開啟連結
+   → GitHub 授權頁面
+
+3. 授權完成
+   → 跳回 https://ls.illusd.com/oauth/callback?code=XXXXX
+   → 顯示授權碼，可一鍵複製
+
+4. 回到終端機
+   → lss login XXXXXX
+   → 登入完成 ✅
 ```
 
-### 授權碼登入
-```powershell
-ls login
-# 取得授權碼後，在終端機執行：
-ls login ABCD1234
+## GitHub OAuth 設定
+
+1. 前往 https://github.com/settings/developers → New OAuth App
+2. 填入：
+   - **Application name**: `LessLS`
+   - **Homepage URL**: `https://ls.illusd.com`
+   - **Authorization callback URL**: `https://ls.illusd.com/oauth/callback`
+3. 取得 Client ID，填入 `.env`：
+   ```
+   GITHUB_OAUTH_CLIENT_ID=Iv1.xxx_your_client_id
+   ```
+
+## 環境配置
+
+```bash
+# packages/cli/.env（不要提交到 git）
+GITHUB_OAUTH_CLIENT_ID=your_client_id_here
+GITHUB_OAUTH_REDIRECT_URI=https://ls.illusd.com/oauth/callback
+LESSLS_REGISTRY=https://registry.lessls.org
+LESSLS_API_BASE=https://api.lessls.org
+LESSLS_GITHUB_REPO=lessls/lessls
 ```
 
-### Token 登入
-```powershell
-ls login user:your-auth-token
-```
+## 網站
 
-## 套件來源
-
-| 來源 | 說明 | 安裝方式 |
-|------|------|------|
-| LessLS Registry | 官方套件庫 | `ls install <pkg>` |
-| npm | npm 相容模式 | `ls install <pkg> --registry npm` |
-| GitHub | 直接從倉庫安裝 | `ls install github <owner>/<repo>` |
-
-## 官方網站
-
-https://ls.illusd.com
+- 首頁：https://ls.illusd.com/home
+- OAuth 回跳：https://ls.illusd.com/oauth/callback
 
 ## 開發
 
