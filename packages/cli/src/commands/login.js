@@ -15,7 +15,7 @@ function run(args, ctx) {
   const { log, info, ok, warn } = ctx;
   const { CONFIG_PATH } = ctx;
 
-  // 模式 1：lss login <code> — 授權碼登入
+  // 模式 1：lss login <code> — 6 碼授權碼登入
   if (args[0] && args[0].match(/^[A-Z0-9]{6}$/i)) {
     return loginByCode(args[0], ctx);
   }
@@ -28,6 +28,15 @@ function run(args, ctx) {
     saveConfig({ user: username, token, __configPath: CONFIG_PATH });
     ok(`已登入 ${username}`);
     info('Token 已儲存至 ~/.lessls/config.json');
+    return;
+  }
+
+  // 不符合任何格式，顯示錯誤
+  if (args[0]) {
+    warn(`無效的參數：${args[0]}`);
+    log('');
+    info('授權碼格式為 6 位大寫字母數字，例如：lss login ABC123');
+    info('或輸入 token：lss login user:token');
     return;
   }
 
@@ -65,44 +74,58 @@ function run(args, ctx) {
 }
 
 // ── 授權碼登入 ────────────────────────────────────────────────
+// GitHub OAuth 回傳的 code 需透過後端換 token，暫時用本地驗證
+// 後端上線後自動切換
 
 async function loginByCode(code, ctx) {
   const { log, info, ok, warn } = ctx;
   const { CONFIG_PATH } = ctx;
 
-  code = code.toUpperCase();
-
   log('');
   info(`正在驗證授權碼 ${code} ...`);
 
+  // 先嘗試後端 API（正式環境）
   try {
     const res = await fetch(`${config.apiBase}/auth/verify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code }),
     });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `HTTP ${res.status}`);
+    if (res.ok) {
+      const data = await res.json();
+      saveConfig({
+        user: data.user || data.login || 'user',
+        token: data.token || code,
+        avatar: data.avatar_url || data.avatar || '',
+        __configPath: CONFIG_PATH,
+      });
+      ok(`已登入 ${data.user || data.login || 'user'}`);
+      info('Token 已儲存至 ~/.lessls/config.json');
+      return;
     }
+  } catch {} // 後端不可用，繼續用 GitHub 驗證
 
-    const data = await res.json();
-    saveConfig({
-      user: data.user || data.login || 'user',
-      token: data.token || data.access_token || '',
-      avatar: data.avatar_url || data.avatar || '',
-      __configPath: CONFIG_PATH,
-    });
+  // 後端不可用時，用 code 直接呼叫 GitHub API 換 user info
+  try {
+    const res = await fetch(`https://api.github.com/user?access_token=${code}`);
+    if (res.ok) {
+      const user = await res.json();
+      saveConfig({
+        user: user.login,
+        token: code,
+        avatar: user.avatar_url || '',
+        __configPath: CONFIG_PATH,
+      });
+      ok(`已登入 ${user.login}`);
+      info('Token 已儲存至 ~/.lessls/config.json');
+      return;
+    }
+  } catch {}
 
-    ok(`已登入 ${data.user || data.login || 'user'}`);
-    info('Token 已儲存至 ~/.lessls/config.json');
-  } catch (err) {
-    warn(`授權碼驗證失敗：${err.message}`);
-    log('');
-    info('請確認授權碼是否正確或已過期');
-    info('重新執行 lss login 取得新的授權碼');
-  }
+  warn('驗證失敗，授權碼無效或已過期');
+  log('');
+  info('請重新執行 lss login 取得新的授權連結');
+  info('或直接使用 token 登入：lss login <github_token>');
 }
 
 // ── GitHub OAuth ──────────────────────────────────────────────
