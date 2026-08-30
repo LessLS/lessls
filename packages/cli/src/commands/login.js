@@ -46,33 +46,19 @@ function run(args, ctx) {
   // 產生授權碼
   const code = generateAuthCode();
   const githubUrl = `https://github.com/login/oauth/authorize?client_id=${config.githubOAuthClientId}&redirect_uri=${encodeURIComponent(config.githubOAuthRedirectUri)}&scope=read:user&state=${code}`;
-  const lesslsUrl = `${config.registry}/login?code=${code}`;
 
-  log('  ┌─ GitHub 快速登入 ───────────────────────────────');
+  log('  ┌─ GitHub 登入 ────────────────────────────────────────');
   log('  │');
   log(`  │  授權碼：${code}`);
   log('  │');
   log('  │  步驟：');
-  log('  │    1. 點擊下方連結');
-  log('  │    2. 授權 GitHub 帳號');
-  log('  │    3. 登入完成');
+  log('  │    1. 點擊下方連結授權 GitHub');
+  log('  │    2. 授權後跳回 ls.illusd.com 取得 code');
+  log('  │    3. 在終端機執行：lss login <code>');
   log('  │');
   log(`  │  👉 ${githubUrl}`);
   log('  │');
-  log('  └───────────────────────────────────────────────────');
-  log('');
-
-  log('  ┌─ LessLS 官方登入 ───────────────────────────────');
-  log('  │');
-  log(`  │  授權碼：${code}`);
-  log('  │');
-  log('  │  請前往以下網址，輸入授權碼完成登入：');
-  log(`  │  👉 ${lesslsUrl}`);
-  log('  │');
-  log('  │  或直接在終端機執行：');
-  log(`  │  lss login ${code}`);
-  log('  │');
-  log('  └───────────────────────────────────────────────────');
+  log('  └───────────────────────────────────────────────────────');
   log('');
 
   info('授權碼有效期 5 分鐘，請盡快完成登入');
