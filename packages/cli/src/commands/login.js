@@ -15,13 +15,13 @@ function run(args, ctx) {
   const { log, info, ok, warn } = ctx;
   const { CONFIG_PATH } = ctx;
 
-  // 模式 1：lss login <code> — 6 碼授權碼登入
-  if (args[0] && args[0].match(/^[A-Z0-9]{6}$/i)) {
+  // 模式 1：lss login <code> — 授權碼登入（6 碼或 GitHub callback code）
+  if (args[0] && /^[A-Za-z0-9_\-]{6,}$/.test(args[0])) {
     return loginByCode(args[0], ctx);
   }
 
-  // 模式 2：lss login <user:token> 或 lss login <token>
-  if (args[0]) {
+  // 模式 2：lss login <user:token>
+  if (args[0] && args[0].includes(':')) {
     const parts = args[0].split(':');
     const username = parts[0] || 'user';
     const token = parts[1] || '';
@@ -35,7 +35,7 @@ function run(args, ctx) {
   if (args[0]) {
     warn(`無效的參數：${args[0]}`);
     log('');
-    info('授權碼格式為 6 位大寫字母數字，例如：lss login ABC123');
+    info('授權碼範例：lss login ABCD12 或 lss login gho_xxxxxxxxxxxx');
     info('或輸入 token：lss login user:token');
     return;
   }
@@ -74,8 +74,10 @@ function run(args, ctx) {
 }
 
 // ── 授權碼登入 ────────────────────────────────────────────────
-// GitHub OAuth 回傳的 code 需透過後端換 token，暫時用本地驗證
-// 後端上線後自動切換
+// 支援兩種模式：
+// 1. 後端 API：lss login <6碼> → POST api.lessls.org/auth/verify
+// 2. GitHub OAuth：lss login <code> → GET api.github.com/user?access_token=code
+//    （GitHub 會把 authorization code 直接當成 access_token 使用）
 
 async function loginByCode(code, ctx) {
   const { log, info, ok, warn } = ctx;
