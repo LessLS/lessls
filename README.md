@@ -6,9 +6,9 @@
 # 安裝
 lss install @lessls/lessls
 
-# 登入（GitHub OAuth 授權碼）
+# 登入（GitHub PAT）
 lss login
-lss login ABCD1234
+lss login <github_pat>
 
 # 發布
 lss release
@@ -45,9 +45,9 @@ npm install -g @lessls/lessls
 | `lss help` | 顯示協助訊息 | `lss help` |
 | `lss install <pkg>` | 安裝套件 | `lss install @lessls/lessls` |
 | `lss install github <repo>` | 從 GitHub 倉庫安裝 | `lss install github lessls/lessls` |
-| `lss login` | 取得 GitHub 授權連結 | `lss login` |
-| `lss login <code>` | 使用授權碼登入 | `lss login ABCD1234` |
-| `lss login <user:token>` | 直接使用 Token 登入 | `lss login user:token` |
+| `lss login` | 取得 GitHub PAT 登入指引 | `lss login` |
+| `lss login <token>` | 直接使用 GitHub Token 登入 | `lss login ghp_xxxx` |
+| `lss login <user>:<token>` | 指定使用者名稱 | `lss login user:token` |
 | `lss release` | 發布當前專案 | `lss release --tag latest` |
 | `lss update` | 從 Registry 更新 | `lss update` |
 | `lss update github` | 從 GitHub releases 更新 | `lss update github` |
@@ -59,47 +59,20 @@ npm install -g @lessls/lessls
 
 ```
 1. lss login
-   → 顯示 GitHub 授權連結 + 授權碼
+   → 顯示 GitHub PAT 登入指引
 
-2. 瀏覽器開啟連結
-   → GitHub 授權頁面
+2. 前往 https://github.com/settings/tokens
+   → 產生 Personal Access Token
+   → 勾選 repo 和 read:user 權限
 
-3. 授權完成
-   → 跳回 https://ls.illusd.com/oauth/callback?code=XXXXX
-   → 顯示授權碼，可一鍵複製
-
-4. 回到終端機
-   → lss login XXXXXX
+3. lss login <github_pat>
+   → 驗證成功，Token 儲存至 ~/.lessls/config.json
    → 登入完成 ✅
-```
-
-## GitHub OAuth 設定
-
-1. 前往 https://github.com/settings/developers → New OAuth App
-2. 填入：
-   - **Application name**: `LessLS`
-   - **Homepage URL**: `https://ls.illusd.com`
-   - **Authorization callback URL**: `https://ls.illusd.com/oauth/callback`
-3. 取得 Client ID，填入 `.env`：
-   ```
-   GITHUB_OAUTH_CLIENT_ID=Iv1.xxx_your_client_id
-   ```
-
-## 環境配置
-
-```bash
-# packages/cli/.env（不要提交到 git）
-GITHUB_OAUTH_CLIENT_ID=your_client_id_here
-GITHUB_OAUTH_REDIRECT_URI=https://ls.illusd.com/oauth/callback
-LESSLS_REGISTRY=https://registry.lessls.org
-LESSLS_API_BASE=https://api.lessls.org
-LESSLS_GITHUB_REPO=lessls/lessls
 ```
 
 ## 網站
 
 - 首頁：https://ls.illusd.com/home
-- OAuth 回跳：https://ls.illusd.com/oauth/callback
 
 ## 開發
 
