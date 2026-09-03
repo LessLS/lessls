@@ -56,7 +56,7 @@ function run(args, ctx) {
 
       if (registry === 'github') {
         // GitHub tarball
-        const tarUrl = `https://github.com/${pkgSpec.replace('/', '/archive/refs/heads/main.tar.gz'`)}`;
+        const tarUrl = `https://github.com/${pkgSpec}/archive/refs/heads/main.tar.gz`;
         const tarDest = path.join(destDir, 'package.tar.gz');
         return download(tarUrl, tarDest)
           .then(() => {
