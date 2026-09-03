@@ -13,7 +13,6 @@ function run(args, ctx) {
   log('  lss install <package>          安裝套件，例如：lss install @lessls/lessls');
   log('  lss install github <owner>/<repo>  從 GitHub 倉庫安裝');
   log('  lss login                      登入 LessLS 帳號');
-  log('  lss login <code>               使用授權碼登入');
   log('  lss release                      發布當前專案到 LessLS Registry');
   log('  lss update                       更新 LessLS 本身');
   log('  lss update github                從 GitHub 更新');
@@ -28,16 +27,16 @@ function run(args, ctx) {
   log('  GitHub:                  lss install github <owner>/<repo>');
 
   log(chalk.bold + '\n登入方式：' + chalk.reset);
-  log('  lss login                  → 取得授權碼，前往網頁完成登入');
-  log('  lss login <code>           → 使用授權碼快速登入');
-  log('  lss login <user:token>     → 直接使用 Token 登入');
+  log('  lss login                    → 顯示 GitHub PAT 登入指引');
+  log('  lss login <github_pat>       → 直接使用 GitHub Token 登入');
+  log('  lss login <user>:<token>     → 指定使用者名稱登入');
 
   log(chalk.bold + '\n範例：' + chalk.reset);
   log('  lss install @lessls/lessls');
   log('  lss install typescript --registry npm');
   log('  lss install github lessls/lessls');
   log('  lss login');
-  log('  lss login ABCD1234');
+  log('  lss login ghp_xxxxxxxxxxxx');
   log('  lss release --tag latest');
   log('  lss update github');
   log('  lss search http');
