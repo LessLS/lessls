@@ -19,13 +19,13 @@ function run(args, ctx) {
   const installed = countPackages(LOCK_PATH, fs);
 
   log('');
-  log('  ┌─ LessLS Status ──────────────────────────────────────────');
-  log(`  │  版本    : ${version}${' '.repeat(38 - version.length)}`);
+  log(`  ┌─ LessLS Status ───────────────────────────────`);
+  log(`  │  版本    : ${version}`);
   log(`  │  安裝路徑: ${process.execPath}`);
-  log(`  │  帳號    : ${user}${' '.repeat(38 - user.length)}`);
-  log(`  │  已安裝套件: ${installed}${' '.repeat(30 - String(installed).length)}`);
+  log(`  │  帳號    : ${user}`);
+  log(`  │  已安裝套件: ${installed}`);
   log(`  │  Registry: ${registry}`);
-  log('  └─────────────────────────────────────────────────────────');
+  log(`  └──────────────────────────────────────────────`);
   log('');
 }
 
